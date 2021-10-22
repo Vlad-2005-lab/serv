@@ -86,4 +86,5 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(port=80, host='10.34.196.73')
+    # app.run(port=80, host='10.34.196.73')
+    app.run(port=int(os.environ.get("PORT")), host='0.0.0.0')
