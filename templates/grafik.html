@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <style>
+        .body{
+            background-color:#FFFFFF;
+            width: 98vw;
+        }
+        .header{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            display: inline-block;
+            margin: 0px;
+            height: 10vh;
+            width: 100%;
+            background-color:#00bfff;
+        }
+        .btn-head{
+            position: relative;
+            display: inline-block;
+            height: 100%;
+            width: 30%;
+            left: 30%;
+            background-color: #00bfff;
+            border-color: #00bfff;
+        }
+        .grafik{
+            height: 70vh;
+            width: 49%;
+            margin-top: 20vh;
+            margin-left: 0;
+            display: inline-block;
+        }
+    </style>
+    <script src="static/chart/lib/liteChart.min.js"></script>
+    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body class="body">
+<header class="header">
+    <h1 style="margin-top: 2vh; margin-left: 2vh;">DeFind</h1>
+</header>
+<div id="chart" class="grafik" style="display: inline-block;"></div>
+<div id="chart2" class="grafik" style="display: inline-block;"></div>
+<script>
+    let a;
+    function getData() {
+         let xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://10.34.196.73/api/get_data', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send();
+        let json = JSON.parse(xhr.responseText);
+<!--        console.log(json.predict);-->
+        return [json.data, json.predict, json.yf, json.xf];
+<!--return Math.random();-->
+    }
+
+    var c = getData();
+    var y1 = c[0];
+    var y2 = c[1];
+    var yf = c[2];
+    var xf = c[3];
+<!--    console.log(y1);-->
+    Plotly.plot('chart',[{
+                y: y1,
+                type:'line',
+                color: "blue",
+                name: "vibration"
+             },  {y: y2,
+                type:'line',
+                color: "yellow",
+                name: "predict"}]);
+
+    Plotly.plot('chart2',[{
+                y: yf,
+                x: xf,
+                type:'line',
+                color: "blue",
+                name: "Фурье"
+                }]);
+
+    var cnt = 0;
+    console.log(Object.getOwnPropertyNames(Plotly.__proto__));
+    setInterval(function() {
+        var c = getData();
+        var y1 = c[0];
+        var y2 = c[1];
+        var yf = c[2];
+        var xf = c[3];
+        Plotly.react('chart2', [{
+                y: yf,
+                x: xf,
+                type:'line',
+                color: "blue",
+                name: "Фурье"
+                }]);
+        Plotly.extendTraces('chart', { y: [y1]}, [0]);
+        Plotly.extendTraces('chart', { y: [y2]}, [1]);
+        cnt += 256;
+                if(cnt > 256) {
+                    Plotly.relayout('chart',{
+                        xaxis: {
+                            range: [cnt-256,cnt]
+                        }
+                    });
+                }
+
+    }, 500);
+</script>
+</body>
+</html>
