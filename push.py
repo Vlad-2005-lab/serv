@@ -1,4 +1,5 @@
-summ = 0
-for i in range(1, 998):
-    summ += int(str(i)[0]) - int(str(i)[-1])
-print(summ)
+f = open("data.txt", "w")
+f1 = open("requirements.txt", "r")
+for i in f1.read().split("\n"):
+    f.write("==".join(i.split()))
+    f.write("\n")
